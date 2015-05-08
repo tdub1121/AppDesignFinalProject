@@ -23,9 +23,9 @@ function serveFile( filename, req, res )
 function serverFn( req, res )
 {
     var filename = req.url.substring( 1, req.url.length );
-    if( filename == "linkdb_front.js" )
+    if( filename == "storefrontclient.js" )
     {
-        serveFile( "linkdb_front.js", req, res );
+        serveFile( "storefrontclient.js", req, res );
     }
     else
     {
