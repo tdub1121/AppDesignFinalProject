@@ -1,3 +1,7 @@
+var fs = require( "fs" );
+var http = require( "http" );
+var sqlite = require( "sqlite3" );
+
 function serveFile( filename, req, res )
 {
     var contents = "";
