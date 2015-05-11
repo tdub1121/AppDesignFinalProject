@@ -2,11 +2,26 @@ var fs = require( "fs" );
 var http = require( "http" );
 var sqlite = require( "sqlite3" );
 
+function fillTable(res)
+{
+    var db = new sqlite.Database("StoreFront.sqlite");
+    var rows = {};
+    db.each("SELECT * FROM ITEM WHERE ID = 1 OR ID = 2 OR ID = 3", function(err,row){
+        rows[row.ID] = row;
+        console.log(row);
+    });        
+    db.close(function(){
+        console.log(rows);
+        res.writeHead(200);
+        res.end(JSON.stringify(rows));
+    });
+}
+
 function serveFile( filename, req, res )
 {
     var contents = "";
     try {
-    	contents = fs.readFileSync( filename ).toString();
+    	contents = fs.readFileSync( filename );
     }
     catch( e ) {
     	console.log(
@@ -26,6 +41,19 @@ function serverFn( req, res )
     if( filename == "storefrontclient.js" )
     {
         serveFile( "storefrontclient.js", req, res );
+    }
+    else if( filename == "storefront.css" )
+    {
+        serveFile( "storefront.css", req, res );
+    }
+    else if(filename == "featureditems")
+    {
+        fillTable(res);
+    }
+    else if( filename.substring(filename.length-3, filename.length) == "jpg")
+    {
+        serveFile(filename, req, res);
+        console.log(filename);
     }
     else
     {
