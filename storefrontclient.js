@@ -21,7 +21,6 @@ function fillTable(){
     td1.innerHTML = items[i].NAME;
     var img = document.createElement("img");
     img.src = items[i].IMG;
-    img.className = "image";
     td2.appendChild(img);
     td2.className = "imgcell";
     td3.innerHTML = "$"+items[i].PRICE;
