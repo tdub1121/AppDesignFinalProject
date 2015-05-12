@@ -1,3 +1,12 @@
+//Cookie functions from http://www.w3schools.com/js/js_cookies.asp
+
+function setCookie(cname, cvalue, exdays) {
+    var d = new Date();
+    d.setTime(d.getTime() + (exdays*24*60*60*1000));
+    var expires = "expires="+d.toUTCString();
+    document.cookie = cname + "=" + cvalue + "; " + expires;
+} 
+
 function getCookie(cname) {
     var name = cname + "=";
     var ca = document.cookie.split(';');
@@ -10,6 +19,7 @@ function getCookie(cname) {
 } 
 
 function load(){
+<<<<<<< HEAD
     var tablereq = new XMLHttpRequest();
     tablereq.onload = fillTable;
     tablereq.open( "get", "featureditems" );
@@ -18,6 +28,23 @@ function load(){
     var checkacct = document.getElementById("checkacct");
     if (username !== "") {
         checkacct.innerHTML = "Welcome, " + username;
+=======
+  var tablereq = new XMLHttpRequest();
+  tablereq.onload = fillTable;
+  tablereq.open( "get", "featureditems" );
+  tablereq.send();
+  var username = getCookie("username");
+  var checkacct = document.getElementById("checkacct");
+  if (username !== "") {
+        checkacct.innerHTML = "Welcome, " + getCookie("name");
+        var p = document.createElement("p");
+        var out = document.createElement("input");
+        out.type = "button";
+        out.value = "Log Out";
+        out.onclick = logout;
+        p.appendChild(out);
+        checkacct.appendChild(p);
+>>>>>>> 0199fad658fc4b7f25b83824c2058ef2e25d1d62
     }
     else{
         // checkacct.innerHTML = "Please click here to create an account.";
@@ -36,6 +63,11 @@ function load2(){
     
     
    
+}
+
+function logout(){
+    setCookie("username", "", 30);
+    window.location.href = "./";
 }
 
 function fillTable(){
@@ -74,25 +106,59 @@ function fillTable(){
 }
 
 function makeAccount(){
+    var username = document.getElementById("usernameboxcreate").value;
+    var pword = document.getElementById("passwordboxcreate").value;
     var name = document.getElementById("namebox").value;
     var addr = document.getElementById("addbox").value;
     var phone = document.getElementById("phonebox").value;
     var card = document.getElementById("cardbox").value;
     var accreq = new XMLHttpRequest();
     accreq.onload = accountMade;
-    var url = "makeacct?"+"name="+name+"&"+"addr="+addr+"&"+"phone="+phone+"&"+"card="+card;
+    var url = "makeacct?"+"username="+username+"&"+"pword="+pword+"&"+"name="+name+"&"+"addr="+addr+"&"+"phone="+phone+"&"+"card="+card;
     console.log(url);
     accreq.open( "get", url );
     accreq.send();
 }
 
 function accountMade(){
-  
+    var information = JSON.parse(this.responseText);
+    console.log(information.name);
+    // document.cookie = "username="+information.name+"";
+    setCookie("username", information.uname, 30);
+    setCookie("name", information.name, 30);
+    window.location.href = "./";
+    console.log("asdfasdfasdf");
+    
 }
 
+<<<<<<< HEAD
 // function getAcctPage(){
 //     var accreq = new XMLHttpRequest();
 //     accreq.onload = fillTable;
 //     accreq.open( "get", "makeaccount.html" );
 //     accreq.send();  
 // }
+=======
+function login(){
+    var uname = document.getElementById("usernamebox").value;
+    var pword = document.getElementById("passwordbox").value;
+    var url = "login?"+uname+"&"+pword;
+    console.log("login");
+    var loginreq = new XMLHttpRequest();
+    loginreq.onload = loginAttempt;
+    loginreq.open( "get", url );
+    loginreq.send();
+}
+
+function loginAttempt(){
+    var result = JSON.parse(this.responseText);
+    if(result === ""){
+        alert("Incorrect username or password.");        
+    }
+    else{
+        setCookie("username", result.username, 30);
+        setCookie("name", result.name, 30);
+        window.location.href = "./";
+    }
+}
+>>>>>>> 0199fad658fc4b7f25b83824c2058ef2e25d1d62

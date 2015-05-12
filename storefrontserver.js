@@ -41,14 +41,50 @@ function makeAccount(filename, res)
     console.log("asdfadsfasdf");
     var db = new sqlite.Database("StoreFront.sqlite");
     var info = filename.split("?")[1].split("&");
-    var name = info[0].split("=")[1];
-    var addr = info[1].split("=")[1];
-    var phone = info[2].split("=")[1];
-    var card = info[3].split("=")[1];
-    var information = {address:addr, phone:phone, card:card};
+    var uname = info[0].split("=")[1];
+    var pword = info[1].split("=")[1];
+    var name = info[2].split("=")[1];
+    var addr = info[3].split("=")[1];
+    var phone = info[4].split("=")[1];
+    var card = info[5].split("=")[1];
+    var information = {name: name, address:addr, phone:phone, card:card, uname:uname};
     console.log(name + information);
-    res.writeHead(200);
-    res.end("");
+    var sql_cmd = "INSERT INTO CUSTOMER ('USERNAME', 'PASSWORD', 'NAME', 'INFORMATION', 'BALANCE') VALUES ('"+uname+"', '"+pword+"', '"+
+        name+"', '"+information+"', '0')";
+    db.run( sql_cmd );
+    db.close(function(){
+        res.writeHead(200);
+        res.end(JSON.stringify(information));
+    });    
+}
+
+function login(filename, res)
+{
+    var db = new sqlite.Database("StoreFront.sqlite");
+    var info = filename.split("?")[1].split("&");
+    var unameExists = false;
+    var result = {};
+    console.log(info[0]);
+    db.each("SELECT * FROM CUSTOMER WHERE USERNAME = '"+info[0]+"'", function(err,row){
+        unameExists = true;
+        console.log(row);
+        if(row.PASSWORD == info[1]){
+            res.writeHead(200);
+            result.username = row.USERNAME;
+            result.name = row.NAME;
+            res.end(JSON.stringify(result));
+        }
+        else{
+            res.writeHead(200);
+            res.end("");
+        }
+    });
+    db.close(function(){if(!unameExists){
+            res.writeHead(200);
+            res.end("");
+        }
+    });
+
 }
 
 function serveFile( filename, req, res )
@@ -84,14 +120,21 @@ function serverFn( req, res )
     {
         fillTable(res);
     }
+<<<<<<< HEAD
     else if(filename == "listitems")
     {
 	fillTable2(res);
     }
     else if( filename.substring(0,7) == "makeacct")
+=======
+    else if( filename.substring(0,8) == "makeacct")
+>>>>>>> 0199fad658fc4b7f25b83824c2058ef2e25d1d62
     {
         makeAccount(filename, res);
-        console.log("asdfasdf");
+    }
+    else if( filename.substring(0,5) == "login")
+    {
+        login(filename, res);
     }
     else if( filename.substring(filename.length-3, filename.length) == "jpg")
     {
