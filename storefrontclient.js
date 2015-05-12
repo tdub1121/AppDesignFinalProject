@@ -26,7 +26,7 @@ function load(){
   var username = getCookie("username");
   var checkacct = document.getElementById("checkacct");
   if (username !== "") {
-        checkacct.innerHTML = "Welcome, " + username;
+        checkacct.innerHTML = "Welcome, " + getCookie("name");
         var p = document.createElement("p");
         var out = document.createElement("input");
         out.type = "button";
@@ -85,13 +85,15 @@ function fillTable(){
 }
 
 function makeAccount(){
+    var username = document.getElementById("usernameboxcreate").value;
+    var pword = document.getElementById("passwordboxcreate").value;
     var name = document.getElementById("namebox").value;
     var addr = document.getElementById("addbox").value;
     var phone = document.getElementById("phonebox").value;
     var card = document.getElementById("cardbox").value;
     var accreq = new XMLHttpRequest();
     accreq.onload = accountMade;
-    var url = "makeacct?"+"name="+name+"&"+"addr="+addr+"&"+"phone="+phone+"&"+"card="+card;
+    var url = "makeacct?"+"username="+username+"&"+"pword="+pword+"&"+"name="+name+"&"+"addr="+addr+"&"+"phone="+phone+"&"+"card="+card;
     console.log(url);
     accreq.open( "get", url );
     accreq.send();
@@ -101,7 +103,8 @@ function accountMade(){
     var information = JSON.parse(this.responseText);
     console.log(information.name);
     // document.cookie = "username="+information.name+"";
-    setCookie("username", information.name, 30);
+    setCookie("username", information.uname, 30);
+    setCOokie("name", information.name, 30);
     window.location.href = "./";
     console.log("asdfasdfasdf");
     
