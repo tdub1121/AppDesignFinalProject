@@ -6,14 +6,33 @@ function fillTable(res)
 {
     var db = new sqlite.Database("StoreFront.sqlite");
     var rows = {};
+    rows.length = 0;
+
     db.each("SELECT * FROM ITEM WHERE ID = 1 OR ID = 2 OR ID = 3", function(err,row){
         rows[row.ID] = row;
         console.log(row);
+	rows.length++;
     });        
     db.close(function(){
         console.log(rows);
         res.writeHead(200);
         res.end(JSON.stringify(rows));
+    });
+}
+function fillTable2(res)
+{
+    var db = new sqlite.Database("StoreFront.sqlite");
+    var rows = {};
+    rows.length = 0;
+    db.each("SELECT * FROM ITEM", function(err,row){
+        rows[row.ID] = row;
+        console.log(row);
+	rows.length++;
+    });        
+    db.close(function(){
+        console.log(rows);
+	res.writeHead(200);
+	res.end(JSON.stringify(rows));
     });
 }
 
@@ -65,6 +84,10 @@ function serverFn( req, res )
     {
         fillTable(res);
     }
+    else if(filename == "listitems")
+    {
+	fillTable2(res);
+    }
     else if( filename.substring(0,7) == "makeacct")
     {
         makeAccount(filename, res);
@@ -78,6 +101,10 @@ function serverFn( req, res )
     else if(filename == "makeaccount.html")
     {
       serveFile( filename, req, res );
+    }
+    else if (filename == "catalogue.html")
+    {
+	serveFile(filename, req, res);
     }
     else
     {
