@@ -17,6 +17,21 @@ function fillTable(res)
     });
 }
 
+function makeAccount(filename, res)
+{
+    console.log("asdfadsfasdf");
+    var db = new sqlite.Database("StoreFront.sqlite");
+    var info = filename.split("?")[1].split("&");
+    var name = info[0].split("=")[1];
+    var addr = info[1].split("=")[1];
+    var phone = info[2].split("=")[1];
+    var card = info[3].split("=")[1];
+    var information = {address:addr, phone:phone, card:card};
+    console.log(name + information);
+    res.writeHead(200);
+    res.end("");
+}
+
 function serveFile( filename, req, res )
 {
     var contents = "";
@@ -50,10 +65,19 @@ function serverFn( req, res )
     {
         fillTable(res);
     }
+    else if( filename.substring(0,7) == "makeacct")
+    {
+        makeAccount(filename, res);
+        console.log("asdfasdf");
+    }
     else if( filename.substring(filename.length-3, filename.length) == "jpg")
     {
         serveFile(filename, req, res);
         console.log(filename);
+    }
+    else if(filename == "makeaccount.html")
+    {
+      serveFile( filename, req, res );
     }
     else
     {

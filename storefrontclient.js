@@ -1,8 +1,32 @@
+function getCookie(cname) {
+    var name = cname + "=";
+    var ca = document.cookie.split(';');
+    for(var i=0; i<ca.length; i++) {
+        var c = ca[i];
+        while (c.charAt(0)==' ') c = c.substring(1);
+        if (c.indexOf(name) === 0) return c.substring(name.length,c.length);
+    }
+    return "";
+} 
+
 function load(){
   var tablereq = new XMLHttpRequest();
   tablereq.onload = fillTable;
   tablereq.open( "get", "featureditems" );
   tablereq.send();
+  var username = getCookie("username");
+  var checkacct = document.getElementById("checkacct");
+  if (username !== "") {
+        checkacct.innerHTML = "Welcome, " + username;
+    }
+  else{
+        // checkacct.innerHTML = "Please click here to create an account.";
+        // checkacct.onclick = getAcctPage;
+        var link = document.createElement("a");
+        link.innerHTML = "Please click here to create an account.";
+        link.href = "./makeaccount.html";
+        checkacct.appendChild(link);
+  }
 }
 
 function fillTable(){
@@ -38,3 +62,27 @@ function fillTable(){
   table.appendChild(tr3);
   table.appendChild(tr4); 
 }
+
+function makeAccount(){
+    var name = document.getElementById("namebox").value;
+    var addr = document.getElementById("addbox").value;
+    var phone = document.getElementById("phonebox").value;
+    var card = document.getElementById("cardbox").value;
+    var accreq = new XMLHttpRequest();
+    accreq.onload = accountMade;
+    var url = "makeacct?"+"name="+name+"&"+"addr="+addr+"&"+"phone="+phone+"&"+"card="+card;
+    console.log(url);
+    accreq.open( "get", url );
+    accreq.send();
+}
+
+function accountMade(){
+  
+}
+
+// function getAcctPage(){
+//     var accreq = new XMLHttpRequest();
+//     accreq.onload = fillTable;
+//     accreq.open( "get", "makeaccount.html" );
+//     accreq.send();  
+// }
