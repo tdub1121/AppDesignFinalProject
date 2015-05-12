@@ -104,8 +104,31 @@ function accountMade(){
     console.log(information.name);
     // document.cookie = "username="+information.name+"";
     setCookie("username", information.uname, 30);
-    setCOokie("name", information.name, 30);
+    setCookie("name", information.name, 30);
     window.location.href = "./";
     console.log("asdfasdfasdf");
     
+}
+
+function login(){
+    var uname = document.getElementById("usernamebox").value;
+    var pword = document.getElementById("passwordbox").value;
+    var url = "login?"+uname+"&"+pword;
+    console.log("login");
+    var loginreq = new XMLHttpRequest();
+    loginreq.onload = loginAttempt;
+    loginreq.open( "get", url );
+    loginreq.send();
+}
+
+function loginAttempt(){
+    var result = JSON.parse(this.responseText);
+    if(result === ""){
+        alert("Incorrect username or password.");        
+    }
+    else{
+        setCookie("username", result.username, 30);
+        setCookie("name", result.name, 30);
+        window.location.href = "./";
+    }
 }

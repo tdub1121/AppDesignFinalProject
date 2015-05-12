@@ -39,6 +39,35 @@ function makeAccount(filename, res)
     });    
 }
 
+function login(filename, res)
+{
+    var db = new sqlite.Database("StoreFront.sqlite");
+    var info = filename.split("?")[1].split("&");
+    var unameExists = false;
+    var result = {};
+    console.log(info[0]);
+    db.each("SELECT * FROM CUSTOMER WHERE USERNAME = '"+info[0]+"'", function(err,row){
+        unameExists = true;
+        console.log(row);
+        if(row.PASSWORD == info[1]){
+            res.writeHead(200);
+            result.username = row.USERNAME;
+            result.name = row.NAME;
+            res.end(JSON.stringify(result));
+        }
+        else{
+            res.writeHead(200);
+            res.end("");
+        }
+    });
+    db.close(function(){if(!unameExists){
+            res.writeHead(200);
+            res.end("");
+        }
+    });
+
+}
+
 function serveFile( filename, req, res )
 {
     var contents = "";
@@ -75,6 +104,10 @@ function serverFn( req, res )
     else if( filename.substring(0,8) == "makeacct")
     {
         makeAccount(filename, res);
+    }
+    else if( filename.substring(0,5) == "login")
+    {
+        login(filename, res);
     }
     else if( filename.substring(filename.length-3, filename.length) == "jpg")
     {
