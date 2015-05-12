@@ -1,3 +1,12 @@
+//Cookie functions from http://www.w3schools.com/js/js_cookies.asp
+
+function setCookie(cname, cvalue, exdays) {
+    var d = new Date();
+    d.setTime(d.getTime() + (exdays*24*60*60*1000));
+    var expires = "expires="+d.toUTCString();
+    document.cookie = cname + "=" + cvalue + "; " + expires;
+} 
+
 function getCookie(cname) {
     var name = cname + "=";
     var ca = document.cookie.split(';');
@@ -18,6 +27,13 @@ function load(){
   var checkacct = document.getElementById("checkacct");
   if (username !== "") {
         checkacct.innerHTML = "Welcome, " + username;
+        var p = document.createElement("p");
+        var out = document.createElement("input");
+        out.type = "button";
+        out.value = "Log Out";
+        out.onclick = logout;
+        p.appendChild(out);
+        checkacct.appendChild(p);
     }
   else{
         // checkacct.innerHTML = "Please click here to create an account.";
@@ -27,6 +43,11 @@ function load(){
         link.href = "./makeaccount.html";
         checkacct.appendChild(link);
   }
+}
+
+function logout(){
+    setCookie("username", "", 30);
+    window.location.href = "./";
 }
 
 function fillTable(){
@@ -77,12 +98,11 @@ function makeAccount(){
 }
 
 function accountMade(){
-  
+    var information = JSON.parse(this.responseText);
+    console.log(information.name);
+    // document.cookie = "username="+information.name+"";
+    setCookie("username", information.name, 30);
+    window.location.href = "./";
+    console.log("asdfasdfasdf");
+    
 }
-
-// function getAcctPage(){
-//     var accreq = new XMLHttpRequest();
-//     accreq.onload = fillTable;
-//     accreq.open( "get", "makeaccount.html" );
-//     accreq.send();  
-// }
