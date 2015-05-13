@@ -35,6 +35,34 @@ function fillTable2(res)
 	res.end(JSON.stringify(rows));
     });
 }
+function addtocart(filename, req, res )
+{
+
+    var db = new sqlite.Database( "StoreFront.sqlite" );
+    var url = filename.split("?")[1];
+    var userInfo = url.split("&");
+    var itemId = userInfo[0];
+    var username = userInfo[1];
+    var usercart = {};
+    db.each("SELECT CART FROM CUSTOMER WHERE USERNAME =" + username,
+	    function(err,row){
+		usercart = row.CART;
+	db.each("SELECT * FROM ITEM WHERE ID = " + itemID,
+		function(err,row){
+
+		 usercart.length++;
+		    
+		 usercart[usercart.length] = row;
+		    
+		 });
+    
+    db.close(
+	function(){
+	    res.writeHead(200);
+	    res.end(resp_text);
+});
+}
+		 
 
 function makeAccount(filename, res)
 {
@@ -49,8 +77,8 @@ function makeAccount(filename, res)
     var card = info[5].split("=")[1];
     var information = {name: name, address:addr, phone:phone, card:card, uname:uname};
     console.log(name + information);
-    var sql_cmd = "INSERT INTO CUSTOMER ('USERNAME', 'PASSWORD', 'NAME', 'INFORMATION', 'BALANCE') VALUES ('"+uname+"', '"+pword+"', '"+
-        name+"', '"+information+"', '0')";
+    var sql_cmd = "INSERT INTO CUSTOMER ('USERNAME', 'PASSWORD', 'NAME', 'INFORMATION', 'BALANCE', 'CART') VALUES ('"+uname+"', '"+pword+"', '"+
+        name+"', '"+information+"', '0', '{length:0}')";
     db.run( sql_cmd );
     db.close(function(){
         res.writeHead(200);
@@ -144,6 +172,10 @@ function serverFn( req, res )
     else if (filename == "catalogue.html")
     {
 	serveFile(filename, req, res);
+    }
+    else if (filename.substring(0,8) == "showcart")
+    {
+	addtocart(filename, req, res);
     }
     else
     {

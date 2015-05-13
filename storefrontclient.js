@@ -17,6 +17,7 @@ function getCookie(cname) {
     }
     return "";
 } 
+function addtocart(){
 
 function load(){
 
@@ -26,6 +27,7 @@ function load(){
     tablereq.send();
     var username = getCookie("username");
     var checkacct = document.getElementById("checkacct");
+    var showCart = document.getElementById("showcart");
     if (username !== "") {
        // checkacct.innerHTML = "Welcome, " + username;
 
@@ -52,16 +54,21 @@ function load2(){
     var table2 = new XMLHttpRequest();
     table2.onload = fillTable;
     table2.open( "get", "listitems" );
-    table2.send();
-    
-    
-   
+    table2.send();   
 }
+function addtocart()
+{
+    var table3 = new XMLHttpRequest();
+    table3.onload = <p>Your Cart</p>;
+    table3.open("get", "showcart?" + this.itemID + "&" + getCookie("username"));
+    table3.send();
+var
 
 function logout(){
     setCookie("username", "", 30);
     window.location.href = "./";
 }
+
 
 function fillTable(){
     
@@ -72,30 +79,45 @@ function fillTable(){
   var tr2 = document.createElement("tr");
   var tr3 = document.createElement("tr");
   var tr4 = document.createElement("tr");
+  var tr5 = document.createElement("tr");
   for(var i = 1; i <= items.length; i++){
-    var td1 = document.createElement("td");
-    var td2 = document.createElement("td");
-    var td3 = document.createElement("td");
-    var td4 = document.createElement("td");
-    td1.innerHTML = items[i].NAME;
-    var img = document.createElement("img");
-    img.src = items[i].IMG;
-    td2.appendChild(img);
-    td2.className = "imgcell";
-    td3.innerHTML = "$"+items[i].PRICE;
-    td4.innerHTML = items[i].QUANTITY + " left in stock.";
-    td1.align = "center";
-    td3.align = "center";
-    td4.align = "center";
-    tr1.appendChild(td1);
-    tr2.appendChild(td2);
-    tr3.appendChild(td3);
-    tr4.appendChild(td4);
+      var td1 = document.createElement("td");
+      var td2 = document.createElement("td");
+      var td3 = document.createElement("td");
+      var td4 = document.createElement("td");
+      var td5 = document.createElement("td");
+      
+      td1.innerHTML = items[i].NAME;
+      var img = document.createElement("img");
+      img.src = items[i].IMG;
+      td2.appendChild(img);
+      td2.className = "imgcell";
+      td3.innerHTML = "$"+items[i].PRICE;
+      td4.innerHTML = items[i].QUANTITY + " left in stock.";
+     if (items[i].QUANTITY > 0){
+	 var addbutton = document.createElement( "input");
+	 addbutton.type = "button";
+	 addbutton.value = "Add to Cart";
+	 addbutton.onclick =addtocart;
+	 addbutton.itemID =items[i].ID
+	 td5.appendChild(addbutton);
+	 td5.innerHTML ='<input id=" demo" type= "button" value="Add to Cart" />';
+     }
+      td1.align = "center";
+      td3.align = "center";
+      td4.align = "center";
+      td5.align = "center";
+      tr1.appendChild(td1);
+      tr2.appendChild(td2);
+      tr3.appendChild(td3);
+      tr4.appendChild(td4);
+      tr5.appendChild(td5);
   }
   table.appendChild(tr1);
   table.appendChild(tr2);
   table.appendChild(tr3);
   table.appendChild(tr4); 
+  table.appendChild(tr5);
 }
 
 function makeAccount(){
