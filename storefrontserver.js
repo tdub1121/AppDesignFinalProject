@@ -120,15 +120,11 @@ function serverFn( req, res )
     {
         fillTable(res);
     }
-<<<<<<< HEAD
     else if(filename == "listitems")
     {
 	fillTable2(res);
     }
-    else if( filename.substring(0,7) == "makeacct")
-=======
     else if( filename.substring(0,8) == "makeacct")
->>>>>>> 0199fad658fc4b7f25b83824c2058ef2e25d1d62
     {
         makeAccount(filename, res);
     }
