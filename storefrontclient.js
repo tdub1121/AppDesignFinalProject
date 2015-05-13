@@ -19,7 +19,7 @@ function getCookie(cname) {
 } 
 
 function load(){
-<<<<<<< HEAD
+
     var tablereq = new XMLHttpRequest();
     tablereq.onload = fillTable;
     tablereq.open( "get", "featureditems" );
@@ -27,15 +27,8 @@ function load(){
     var username = getCookie("username");
     var checkacct = document.getElementById("checkacct");
     if (username !== "") {
-        checkacct.innerHTML = "Welcome, " + username;
-=======
-  var tablereq = new XMLHttpRequest();
-  tablereq.onload = fillTable;
-  tablereq.open( "get", "featureditems" );
-  tablereq.send();
-  var username = getCookie("username");
-  var checkacct = document.getElementById("checkacct");
-  if (username !== "") {
+       // checkacct.innerHTML = "Welcome, " + username;
+
         checkacct.innerHTML = "Welcome, " + getCookie("name");
         var p = document.createElement("p");
         var out = document.createElement("input");
@@ -44,7 +37,7 @@ function load(){
         out.onclick = logout;
         p.appendChild(out);
         checkacct.appendChild(p);
->>>>>>> 0199fad658fc4b7f25b83824c2058ef2e25d1d62
+
     }
     else{
         // checkacct.innerHTML = "Please click here to create an account.";
@@ -131,14 +124,14 @@ function accountMade(){
     
 }
 
-<<<<<<< HEAD
+
 // function getAcctPage(){
 //     var accreq = new XMLHttpRequest();
 //     accreq.onload = fillTable;
 //     accreq.open( "get", "makeaccount.html" );
 //     accreq.send();  
 // }
-=======
+
 function login(){
     var uname = document.getElementById("usernamebox").value;
     var pword = document.getElementById("passwordbox").value;
@@ -161,4 +154,3 @@ function loginAttempt(){
         window.location.href = "./";
     }
 }
->>>>>>> 0199fad658fc4b7f25b83824c2058ef2e25d1d62
