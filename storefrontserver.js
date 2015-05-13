@@ -1,7 +1,9 @@
 var fs = require( "fs" );
-var http = require( "http" );
+var https = require( "https" );
 var sqlite = require( "sqlite3" );
-
+var crypto = require( "crypto" );
+var shasum = crypto.createHash('md5');
+console.log(shasum.update("test").digest('hex'));
 function fillTable(res)
 {
     var db = new sqlite.Database("StoreFront.sqlite");
@@ -70,7 +72,7 @@ function makeAccount(filename, res)
     var db = new sqlite.Database("StoreFront.sqlite");
     var info = filename.split("?")[1].split("&");
     var uname = info[0].split("=")[1];
-    var pword = info[1].split("=")[1];
+    var pword = crypto.createHash('md5').update(info[1].split("=")[1]).digest('hex');
     var name = info[2].split("=")[1];
     var addr = info[3].split("=")[1];
     var phone = info[4].split("=")[1];
@@ -96,7 +98,7 @@ function login(filename, res)
     db.each("SELECT * FROM CUSTOMER WHERE USERNAME = '"+info[0]+"'", function(err,row){
         unameExists = true;
         console.log(row);
-        if(row.PASSWORD == info[1]){
+        if(row.PASSWORD == crypto.createHash('md5').update(info[1]).digest('hex')){
             res.writeHead(200);
             result.username = row.USERNAME;
             result.name = row.NAME;
@@ -135,6 +137,7 @@ function serveFile( filename, req, res )
 
 function serverFn( req, res )
 {
+  
     var filename = req.url.substring( 1, req.url.length );
     if( filename == "storefrontclient.js" )
     {
@@ -183,7 +186,12 @@ function serverFn( req, res )
     }
 }
 
-var server = http.createServer( serverFn );
+var options = {
+  key: fs.readFileSync('./server.key'),
+  cert: fs.readFileSync('./server.crt')
+};
+
+var server = https.createServer( options, serverFn );
 
 if( process.argv.length < 3 )
 {

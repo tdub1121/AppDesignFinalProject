@@ -166,11 +166,11 @@ function login(){
 }
 
 function loginAttempt(){
-    var result = JSON.parse(this.responseText);
-    if(result === ""){
+    if(this.responseText === ""){
         alert("Incorrect username or password.");        
     }
     else{
+        var result = JSON.parse(this.responseText);
         setCookie("username", result.username, 30);
         setCookie("name", result.name, 30);
         window.location.href = "./";
