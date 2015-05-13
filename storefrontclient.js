@@ -17,7 +17,6 @@ function getCookie(cname) {
     }
     return "";
 } 
-function addtocart(){
 
 function load(){
 
@@ -30,8 +29,12 @@ function load(){
     var showCart = document.getElementById("showcart");
     if (username !== "") {
        // checkacct.innerHTML = "Welcome, " + username;
-
-        checkacct.innerHTML = "Welcome, " + getCookie("name");
+        var checkreq = new XMLHttpRequest();
+        checkreq.onload = checkCheck;
+        checkreq.open( "get", "checkcheck?"+username );
+        checkreq.send();
+        checkacct.innerHTML = "Welcome, " + getCookie("name") +"<br>";
+        console.log(getCookie("cart"));
         var p = document.createElement("p");
         var out = document.createElement("input");
         out.type = "button";
@@ -50,22 +53,46 @@ function load(){
         checkacct.appendChild(link);
   }
 }
+
+function checkCheck(){
+    if(JSON.parse(this.responseText) === true){
+        setCookie("cart", 0, 30);
+    }
+    var checkacct = document.getElementById("checkacct");
+    checkacct.innerHTML += "You have "+ getCookie("cart").toString() +" items in your cart.";
+}
+
 function load2(){
     var table2 = new XMLHttpRequest();
     table2.onload = fillTable;
     table2.open( "get", "listitems" );
     table2.send();   
 }
-function addtocart()
-{
+function addToCart(){
+    console.log("asfasdf");
+    if(getCookie("username") === ""){
+        alert("Please sign in or create an account first.");
+        return;
+    }    
     var table3 = new XMLHttpRequest();
-    table3.onload = <p>Your Cart</p>;
+    table3.onload = addedtocart;
     table3.open("get", "showcart?" + this.itemID + "&" + getCookie("username"));
     table3.send();
-var
+}
+
+function addedtocart(){
+    var cookstr = getCookie("cart").toString();
+    console.log(cookstr);
+    var cooknum = parseInt(cookstr)+1;
+    setCookie("cart", cooknum, 30);
+    console.log(cooknum);
+    window.location.href = "./";
+}
 
 function logout(){
     setCookie("username", "", 30);
+    setCookie("name", "", 30);
+    setCookie("cart", "", 30);
     window.location.href = "./";
 }
 
@@ -95,13 +122,13 @@ function fillTable(){
       td3.innerHTML = "$"+items[i].PRICE;
       td4.innerHTML = items[i].QUANTITY + " left in stock.";
      if (items[i].QUANTITY > 0){
-	 var addbutton = document.createElement( "input");
-	 addbutton.type = "button";
-	 addbutton.value = "Add to Cart";
-	 addbutton.onclick =addtocart;
-	 addbutton.itemID =items[i].ID
-	 td5.appendChild(addbutton);
-	 td5.innerHTML ='<input id=" demo" type= "button" value="Add to Cart" />';
+      	 var addbutton = document.createElement( "input");
+      	 addbutton.type = "button";
+      	 addbutton.value = "Add to Cart";
+      	 addbutton.onclick = addToCart;
+         console.log(addbutton.onclick);
+      	 addbutton.itemID = items[i].ID;
+      	 td5.appendChild(addbutton);
      }
       td1.align = "center";
       td3.align = "center";
@@ -124,12 +151,9 @@ function makeAccount(){
     var username = document.getElementById("usernameboxcreate").value;
     var pword = document.getElementById("passwordboxcreate").value;
     var name = document.getElementById("namebox").value;
-    var addr = document.getElementById("addbox").value;
-    var phone = document.getElementById("phonebox").value;
-    var card = document.getElementById("cardbox").value;
     var accreq = new XMLHttpRequest();
     accreq.onload = accountMade;
-    var url = "makeacct?"+"username="+username+"&"+"pword="+pword+"&"+"name="+name+"&"+"addr="+addr+"&"+"phone="+phone+"&"+"card="+card;
+    var url = "makeacct?"+"username="+username+"&"+"pword="+pword+"&"+"name="+name;
     console.log(url);
     accreq.open( "get", url );
     accreq.send();
@@ -141,18 +165,11 @@ function accountMade(){
     // document.cookie = "username="+information.name+"";
     setCookie("username", information.uname, 30);
     setCookie("name", information.name, 30);
+    setCookie("cart", 0, 30);
     window.location.href = "./";
     console.log("asdfasdfasdf");
     
 }
-
-
-// function getAcctPage(){
-//     var accreq = new XMLHttpRequest();
-//     accreq.onload = fillTable;
-//     accreq.open( "get", "makeaccount.html" );
-//     accreq.send();  
-// }
 
 function login(){
     var uname = document.getElementById("usernamebox").value;
@@ -173,6 +190,73 @@ function loginAttempt(){
         var result = JSON.parse(this.responseText);
         setCookie("username", result.username, 30);
         setCookie("name", result.name, 30);
+        console.log(result.cartSize);
+        setCookie("cart", result.cartSize, 30);
         window.location.href = "./";
     }
+}
+
+function loadCart(){
+    var table = document.getElementById("thetable");
+    if(parseInt(getCookie("cart")) === 0){
+        table.innerHTML = "You don't have any items in your cart!";
+        return;
+    }
+    var cartreq = new XMLHttpRequest();
+    cartreq.onload = showCart;
+    cartreq.open( "get", "lookcart?" + getCookie("username") );
+    cartreq.send();
+}
+
+function showCart(){
+    var cart = JSON.parse(this.responseText);
+    var table = document.getElementById("thetable");
+    var price = 0;
+    var tr1 = document.createElement("tr");
+    var td11 = document.createElement("td");
+    var td12 = document.createElement("td");
+    td11.innerHTML = "Name";
+    td12.innerHTML = "Price";
+    tr1.appendChild(td11);
+    tr1.appendChild(td12);
+    table.appendChild(tr1);
+    console.log(cart);
+    for (i = 1; i <= cart.amount; i++){
+        var tr = document.createElement("tr");
+        var td1 = document.createElement("td");
+        var td2 = document.createElement("td");
+        price = price + cart[i].PRICE;
+        td1.innerHTML = cart[i].NAME;
+        td2.innerHTML = "$"+cart[i].PRICE.toFixed(2);
+        tr.appendChild(td1);
+        tr.appendChild(td2);
+        table.appendChild(tr);
+    }
+    var tr2 = document.createElement("tr");
+    var td21 = document.createElement("td");
+    var td22 = document.createElement("td");
+    var td23 = document.createElement("td");
+    td21.innerHTML = "Total:";
+    td22.innerHTML = "$"+price.toFixed(2);
+    var checkoutb = document.createElement("input");
+    checkoutb.type = "button";
+    checkoutb.value = "Checkout";
+    checkoutb.onclick = function() {
+        var checkreq = new XMLHttpRequest();
+        checkreq.onload = checkout;
+        checkreq.open( "get", "checkout?" + price );
+        checkreq.send();
+    };
+    td23.appendChild(checkoutb);
+    tr2.appendChild(td21);
+    tr2.appendChild(td22);
+    tr2.appendChild(td23);
+    table.appendChild(tr2);
+}
+
+function checkout(){
+    console.log("asdfasdf");
+    url = JSON.parse(this.responseText).split('"')[0];
+    console.log(url);
+    window.location.href = url;
 }
