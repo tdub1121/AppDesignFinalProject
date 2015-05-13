@@ -19,13 +19,16 @@ function getCookie(cname) {
 } 
 
 function load(){
-  var tablereq = new XMLHttpRequest();
-  tablereq.onload = fillTable;
-  tablereq.open( "get", "featureditems" );
-  tablereq.send();
-  var username = getCookie("username");
-  var checkacct = document.getElementById("checkacct");
-  if (username !== "") {
+
+    var tablereq = new XMLHttpRequest();
+    tablereq.onload = fillTable;
+    tablereq.open( "get", "featureditems" );
+    tablereq.send();
+    var username = getCookie("username");
+    var checkacct = document.getElementById("checkacct");
+    if (username !== "") {
+       // checkacct.innerHTML = "Welcome, " + username;
+
         checkacct.innerHTML = "Welcome, " + getCookie("name");
         var p = document.createElement("p");
         var out = document.createElement("input");
@@ -34,8 +37,9 @@ function load(){
         out.onclick = logout;
         p.appendChild(out);
         checkacct.appendChild(p);
+
     }
-  else{
+    else{
         // checkacct.innerHTML = "Please click here to create an account.";
         // checkacct.onclick = getAcctPage;
         var link = document.createElement("a");
@@ -44,6 +48,15 @@ function load(){
         checkacct.appendChild(link);
   }
 }
+function load2(){
+    var table2 = new XMLHttpRequest();
+    table2.onload = fillTable;
+    table2.open( "get", "listitems" );
+    table2.send();
+    
+    
+   
+}
 
 function logout(){
     setCookie("username", "", 30);
@@ -51,14 +64,15 @@ function logout(){
 }
 
 function fillTable(){
+    
   var items = JSON.parse(this.responseText);
-  console.log(items[1].NAME);
+  console.log(items.length);
   var table = document.getElementById("thetable");
   var tr1 = document.createElement("tr");
   var tr2 = document.createElement("tr");
   var tr3 = document.createElement("tr");
   var tr4 = document.createElement("tr");
-  for(var i = 1; i < 4; i++){
+  for(var i = 1; i <= items.length; i++){
     var td1 = document.createElement("td");
     var td2 = document.createElement("td");
     var td3 = document.createElement("td");
@@ -109,6 +123,14 @@ function accountMade(){
     console.log("asdfasdfasdf");
     
 }
+
+
+// function getAcctPage(){
+//     var accreq = new XMLHttpRequest();
+//     accreq.onload = fillTable;
+//     accreq.open( "get", "makeaccount.html" );
+//     accreq.send();  
+// }
 
 function login(){
     var uname = document.getElementById("usernamebox").value;
